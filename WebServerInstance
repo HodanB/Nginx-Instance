@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  WebServerInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: ami-0df24e148fdb9f1d8
+      InstanceType: t2.micro
+      KeyName: KeyPair
+      UserData:
+        'fn::Base64': !Sub |
+          #!/bin/bash
+          yum update -y 
+          sudo yum install nginx -y
+          sudo amazon-linux-extras install nginx1
+          sudo systemct1 start nginx
+          sudo systemct1 enable nginx
+          sudo nano /usr/share/nginx/html/index.html
+          echo "<!DOCTYPE html>
+          <html>
+          <head>
+              <title>Welcome</title>
+              <style>
+                  html { color-scheme: light dark; }
+                  body { width: 35em; margin: 0 auto; background: linear-gradient(to bottom right, #ff8a00, #e52e71); color: white; text-align: center; padding-top: 50px;}
+                  h1 { font-family: Tahoma, Verdana, Arial, sans-serif; font-weight: bold; text-shadow: 2px 2px; margin-bottom: 30px }
+                  button{ background-color: #ffffff; color: #ff8a00; font-size: 24px; font-weight: bold; border-radius: 10px; padding: 10px 20px; border: none; cursor: pointer; transition: background-color 0.3s ease;}
+                  button:hover {background-color: #ff8a00; color: white; }
+              </style>
+          </head>
+          <body>
+              <h1> Welcome to My Page </h1>                            
+              <button onclick="alert('Hello there!')">Say Hello</button>
+              <button onclick="location.href='https://www.google.com'">Go to Google</button>
+              <button onclick="document.body.style.background='linear-gradient(to bottom right, #6dd5ed, #2193b0)'">Change Background</button>
+              <br></br>
+              <p>If you see this page, the nginx web server is successfully installed and working. Further configuration is required.</p>
+              <p>For online documentation and support please refer to
+              <a href="http://nginx.org/">nginx.org</a>.<br/>
+              Commercial support is available at
+              <a href="http://nginx.com/">nginx.com</a>.</p>
+              <p><em>Thank you for using nginx.</em></p>
+          </body>
+          </html>
+        SecurityGroupIds:
+          - !Ref InstanceSecurityGroup
+      InstanceSecurityGroup:
+        Type: 'AWS::EC2::SecurityGroup'
+        Properties:
+          GroupDescription: Enable HTTP access on port 80
+          SecurityGroupIngress:
+            IpProtocol: tcp
+            FromPort: 80
+            ToPort: 80
+            CidrIp: 0.0.0.0/0
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: eb392f22-f969-4e24-91b0-7d96f64c220d
+Metadata:
+  'AWS::CloudFormation::Designer':
+    eb392f22-f969-4e24-91b0-7d96f64c220d:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 60
+        'y': 90
+      z: 1
+      embeds: []
